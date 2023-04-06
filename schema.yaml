@@ -30,6 +30,8 @@
           and:
             - show_advanced
       variables:
+      - node_pool_image_type
+      - node_image_id
       - VCN-CIDR
       - OKE_LB_Subnet-CIDR
       - OKE_API_EndPoint_Subnet-CIDR
@@ -39,6 +41,7 @@
       - cluster_options_kubernetes_network_config_services_cidr
       - kubernetes_version
       - cluster_name
+      - cluster_type
       - node_pool_size
       - node_pool_shape
       - node_pool_flex_shape_memory
@@ -162,6 +165,17 @@
         title: "OKE Cluster Name"
         description: "Choose OKE Cluster Name."
 
+      cluster_type:
+        type: enum
+        visible: true
+        required: false
+        title: "Cluster Type"
+        description: "Choose Cluster Type."
+        default: "enhanced"
+        enum:
+          - "enhanced"
+          - "basic"
+
       node_pool_size:
         type: number
         required: false
@@ -179,7 +193,28 @@
         description: "Choose shape for compute instances in OKE NodePool."
         default: "VM.Standard.E4.Flex"
         dependsOn:
-          compartmentId: ${compartment_ocid}      
+          compartmentId: ${compartment_ocid}    
+
+      node_pool_image_type:
+        type: enum
+        visible: true
+        required: false
+        title: "Node Pool Image Type"  
+        description: "Select a node pool image type. Choosing CUSTOM requires you also enter a Node Pool Image ID."
+        default: "oke"
+        enum:
+          - "oke"
+          - "platform"
+          - "custom"
+
+      node_image_id:
+        type: string
+        visible: true
+        required: false
+        title: "Node Pool Image OCID"
+        description: "Enter the OCID of the desired node pool image. If you selected an image type of PLATFORM, this field is required."
+        dependsOn:
+            node_pool_image_type: "custom"
 
       node_pool_flex_shape_ocpus:
         type: number

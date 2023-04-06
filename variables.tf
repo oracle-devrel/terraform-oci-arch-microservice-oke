@@ -78,6 +78,10 @@ variable "cluster_name" {
   default = "oke_cluster"
 }
 
+variable "cluster_type" {
+  default = "ENHANCED_CLUSTER"
+}
+
 # Dictionary Locals
 locals {
   compute_flexible_shapes = [
