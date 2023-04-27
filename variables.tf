@@ -49,11 +49,15 @@ variable "node_pool_size" {
 }
 
 variable "kubernetes_version" {
-  default = "v1.20.11"
+  default = "v1.26.2"
 }
 
-variable "node_pool_shape" {
+variable "node_shape" {
   default = "VM.Standard.E4.Flex"
+}
+
+variable "node_pool_image_type" {
+  default = "oke"
 }
 
 /*
@@ -79,7 +83,7 @@ variable "cluster_name" {
 }
 
 variable "cluster_type" {
-  default = "ENHANCED_CLUSTER"
+  default = "enhanced"
 }
 
 # Dictionary Locals
@@ -94,5 +98,5 @@ locals {
 
 # Checks if is using Flexible Compute Shapes
 locals {
-  is_flexible_node_shape = contains(local.compute_flexible_shapes, var.node_pool_shape)
+  is_flexible_node_shape = contains(local.compute_flexible_shapes, var.node_shape)
 }

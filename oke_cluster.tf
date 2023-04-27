@@ -9,9 +9,7 @@ module "oci-oke" {
   oke_cluster_name                  = var.cluster_name
   cluster_type                      = var.cluster_type
   ssh_public_key                    = tls_private_key.public_private_key_pair.public_key_openssh
-  node_shape                        = var.node_pool_shape
-  node_pool_image_type              = var.node_pool_image_type
-  node_image_id                     = var.node_image_id
+  node_shape                        = var.node_shape
   node_ocpus                        = var.node_pool_flex_shape_ocpus
   node_memory                       = var.node_pool_flex_shape_memory
   node_count                        = var.node_pool_size
