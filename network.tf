@@ -22,16 +22,49 @@ resource "oci_core_internet_gateway" "OKE_igw" {
   vcn_id         = oci_core_vcn.OKE_vcn.id
 }
 
-resource "oci_core_route_table" "OKE_rt_via_igw" {
+resource "oci_core_nat_gateway" "OKE_nat_gateway" {
+  block_traffic  = "false"
+  compartment_id = var.compartment_ocid
+  display_name   = "OKE_NAT_gateway"
+  vcn_id         = oci_core_vcn.OKE_vcn.id
+}
+
+resource "oci_core_route_table" "OKE_rt_via_sg_nat" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.OKE_vcn.id
-  display_name   = "OKE_rt_via_igw_and_sg"
+  display_name   = "OKE_rt_via_nat_and_sg"
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_nat_gateway.OKE_nat_gateway.id
+  }
+
+  route_rules {
+    destination       = lookup(data.oci_core_services.AllOCIServices.services[0], "cidr_block")
+    destination_type  = "SERVICE_CIDR_BLOCK"
+    description       = "Traffic to OCI services"
+    network_entity_id = oci_core_service_gateway.OKE_sg.id
+  }
+
+}
+
+resource "oci_core_route_table" "OKE_rt_via_igw" {
+  compartment_id  = var.compartment_ocid
+  vcn_id          = oci_core_vcn.OKE_vcn.id
+  display_name    = "OKE_rt_via_igw"
 
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
     network_entity_id = oci_core_internet_gateway.OKE_igw.id
   }
+}
+
+resource "oci_core_security_list" "OKE_lb_subnet_sec_list" {
+  compartment_id = var.compartment_ocid
+  display_name   = "OKE_lb_subnet_sec_list"
+  vcn_id         = oci_core_vcn.OKE_vcn.id
 
 }
 
@@ -213,8 +246,7 @@ resource "oci_core_subnet" "OKE_lb_subnet" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.OKE_vcn.id
   display_name   = "OKE_lb_subnet"
-
-  security_list_ids = [oci_core_vcn.OKE_vcn.default_security_list_id]
+  security_list_ids = [oci_core_security_list.OKE_lb_subnet_sec_list.id]
   route_table_id    = oci_core_route_table.OKE_rt_via_igw.id
 }
 
@@ -223,8 +255,8 @@ resource "oci_core_subnet" "OKE_nodepool_subnet" {
   compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_vcn.OKE_vcn.id
   display_name      = "OKE_nodepool_subnet"
-  security_list_ids = [oci_core_vcn.OKE_vcn.default_security_list_id, oci_core_security_list.OKE_nodepool_subnet_sec_list.id]
-  route_table_id    = oci_core_route_table.OKE_rt_via_igw.id
+  security_list_ids = [oci_core_security_list.OKE_nodepool_subnet_sec_list.id]
+  route_table_id    = oci_core_route_table.OKE_rt_via_sg_nat.id
 }
 
 

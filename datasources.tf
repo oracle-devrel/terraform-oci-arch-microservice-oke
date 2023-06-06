@@ -19,3 +19,11 @@ data "oci_identity_region_subscriptions" "home_region_subscriptions" {
     values = [true]
   }
 }
+
+data "oci_containerengine_cluster_option" "oci_oke_cluster_option" {
+  cluster_option_id = "all"
+}
+
+data "oci_containerengine_node_pool_option" "oci_oke_node_pool_option" {
+  node_pool_option_id = "all"
+}
