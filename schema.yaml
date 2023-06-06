@@ -149,7 +149,7 @@
         required: false
         title: "Kubernetes Version"
         description: "Choose Kubernetes Version."
-        default: "v1.20.11"
+        default: "v1.26.2"
         enum:
           - "v1.26.2"
           - "v1.25.4"
