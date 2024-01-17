@@ -49,10 +49,10 @@ variable "node_pool_size" {
 }
 
 variable "kubernetes_version" {
-  default = "v1.26.2"
+  default = "v1.28.2"
 }
 
-variable "node_shape" {
+variable "node_pool_shape" {
   default = "VM.Standard.E4.Flex"
 }
 

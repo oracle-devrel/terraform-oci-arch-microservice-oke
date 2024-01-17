@@ -144,16 +144,14 @@
         description: "Choose OKE Services CIDR."
 
       kubernetes_version:
-        type: enum
+        type: oci:kubernetes:versions:id
+        dependsOn:
+          compartmentId: ${compartment_ocid}
+          clusterOptionId: "all"
         visible: true
-        required: false
+        required: true
         title: "Kubernetes Version"
-        description: "Choose Kubernetes Version."
-        default: "v1.26.2"
-        enum:
-          - "v1.26.2"
-          - "v1.25.4"
-          - "v1.24.1"
+        description: "Select Kubernetes Version."
 
       cluster_name:
         type: string
